@@ -327,7 +327,7 @@ describe('JobQueueService', () => {
     })
 
     it('should not start a queue if its name is in the active list', async () => {
-        module.get(ConfigService).jobQueueOptions.activeQueues = [];
+        module.get(ConfigService).jobQueueOptions.activeQueues = ['another'];
 
         const subject = new Subject();
         const testQueue = jobQueueService.createQueue<string>({
