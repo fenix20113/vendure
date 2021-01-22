@@ -706,9 +706,9 @@ export interface JobQueueOptions {
      * @description
      * Defines the queues that will run in this process.
      * This can be used to configure only certain queues to run in this process.
-     * If its not set all queues will be run.
+     * If its empty all queues will be run
      */
-    activeQueues?: string[]
+    activeQueues?: string[];
 }
 
 /**

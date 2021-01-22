@@ -160,12 +160,12 @@ export class JobQueueService implements OnApplicationBootstrap, OnModuleDestroy 
     }
 
     private shouldStartQueue(queueName: string): boolean {
-        if (this.configService.jobQueueOptions.activeQueues) {
+        if (this.configService.jobQueueOptions.activeQueues.length > 0) {
             if (!this.configService.jobQueueOptions.activeQueues.includes(queueName)) {
-                return false
+                return false;
             }
         }
 
-        return true
+        return true;
     }
 }
