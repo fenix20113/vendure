@@ -123,7 +123,10 @@ export class ElasticsearchIndexerController implements OnModuleInit, OnModuleDes
                 return false;
             }
             await this.deleteProductInternal(product, ctx.channelId);
-            const variants = await this.productVariantService.getVariantsByProductId(ctx, productId);
+            const { items: variants } = await this.productVariantService.getVariantsByProductId(
+                ctx,
+                productId,
+            );
             await this.deleteVariantsInternal(variants, ctx.channelId);
             return true;
         });
@@ -141,7 +144,10 @@ export class ElasticsearchIndexerController implements OnModuleInit, OnModuleDes
         const ctx = RequestContext.deserialize(rawContext);
         return asyncObservable(async () => {
             await this.updateProductInternal(ctx, productId);
-            const variants = await this.productVariantService.getVariantsByProductId(ctx, productId);
+            const { items: variants } = await this.productVariantService.getVariantsByProductId(
+                ctx,
+                productId,
+            );
             await this.updateVariantsInternal(
                 ctx,
                 variants.map(v => v.id),
@@ -167,7 +173,10 @@ export class ElasticsearchIndexerController implements OnModuleInit, OnModuleDes
                 return false;
             }
             await this.deleteProductInternal(product, channelId);
-            const variants = await this.productVariantService.getVariantsByProductId(ctx, productId);
+            const { items: variants } = await this.productVariantService.getVariantsByProductId(
+                ctx,
+                productId,
+            );
             await this.deleteVariantsInternal(variants, channelId);
             return true;
         });

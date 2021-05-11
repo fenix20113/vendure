@@ -29,6 +29,7 @@ import { ProductVariantChannelEvent } from '../../event-bus/events/product-varia
 import { ProductVariantEvent } from '../../event-bus/events/product-variant-event';
 import { CustomFieldRelationService } from '../helpers/custom-field-relation/custom-field-relation.service';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
+import { parseFilterParams } from '../helpers/list-query-builder/parse-filter-params';
 import { TranslatableSaver } from '../helpers/translatable-saver/translatable-saver';
 import { samplesEach } from '../helpers/utils/samples-each';
 import { translateDeep } from '../helpers/utils/translate-entity';
@@ -124,8 +125,11 @@ export class ProductVariantService {
             });
     }
 
-    getVariantsByProductId(ctx: RequestContext, productId: ID): Promise<Array<Translated<ProductVariant>>> {
-        const qb = this.connection.getRepository(ctx, ProductVariant).createQueryBuilder('productVariant');
+    getVariantsByProductId(
+        ctx: RequestContext,
+        productId: ID,
+        options: ListQueryOptions<ProductVariant> = {},
+    ): Promise<PaginatedList<Translated<ProductVariant>>> {
         const relations = [
             'options',
             'facetValues',
@@ -134,29 +138,38 @@ export class ProductVariantService {
             'assets',
             'featuredAsset',
         ];
-        FindOptionsUtils.applyFindManyOptionsOrConditionsToQueryBuilder(qb, { relations });
-        // tslint:disable-next-line:no-non-null-assertion
-        FindOptionsUtils.joinEagerRelations(qb, qb.alias, qb.expressionMap.mainAlias!.metadata);
-        return qb
-            .innerJoinAndSelect('productVariant.channels', 'channel', 'channel.id = :channelId', {
+
+        return this.listQueryBuilder
+            .build(ProductVariant, options, {
+                relations,
+                orderBy: { id: 'ASC' },
+                where: { deletedAt: null },
+                ctx,
+            })
+            .innerJoinAndSelect('productvariant.channels', 'channel', 'channel.id = :channelId', {
                 channelId: ctx.channelId,
             })
-            .innerJoinAndSelect('productVariant.product', 'product', 'product.id = :productId', {
+            .innerJoinAndSelect('productvariant.product', 'product', 'product.id = :productId', {
                 productId,
             })
-            .andWhere('productVariant.deletedAt IS NULL')
-            .orderBy('productVariant.id', 'ASC')
-            .getMany()
-            .then(variants =>
-                variants.map(variant => {
-                    const variantWithPrices = this.applyChannelPriceAndTax(variant, ctx);
-                    return translateDeep(variantWithPrices, ctx.languageCode, [
-                        'options',
-                        'facetValues',
-                        ['facetValues', 'facet'],
-                    ]);
-                }),
-            );
+            .getManyAndCount()
+            .then(async ([variants, totalItems]) => {
+                const items = await Promise.all(
+                    variants.map(async variant => {
+                        const variantWithPrices = await this.applyChannelPriceAndTax(variant, ctx);
+                        return translateDeep(variantWithPrices, ctx.languageCode, [
+                            'options',
+                            'facetValues',
+                            ['facetValues', 'facet'],
+                        ]);
+                    }),
+                );
+
+                return {
+                    items,
+                    totalItems,
+                };
+            });
     }
 
     getVariantsByCollectionId(
