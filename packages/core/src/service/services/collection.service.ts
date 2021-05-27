@@ -66,6 +66,11 @@ export class CollectionService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
+        // this event listener is useless if filters are empty?
+        if (!this.configService.catalogOptions.collectionFilters.length) {
+            return;
+        }
+
         const productEvents$ = this.eventBus.ofType(ProductEvent);
         const variantEvents$ = this.eventBus.ofType(ProductVariantEvent);
 
