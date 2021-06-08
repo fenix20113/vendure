@@ -556,6 +556,13 @@ export interface CatalogOptions {
     collectionFilters: Array<CollectionFilter<any>>;
     /**
      * @description
+     * a boolean indicating whether to create an apply-collection-filters queue or not
+     *
+     * @default true
+     */
+    createApplyCollectionFiltersQueue: boolean;
+    /**
+     * @description
      * Defines the strategy used for calculating the price of ProductVariants based
      * on the Channel settings and active tax Zone.
      *

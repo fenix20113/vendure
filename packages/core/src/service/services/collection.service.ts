@@ -66,6 +66,10 @@ export class CollectionService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
+        if (!this.configService.catalogOptions.createApplyCollectionFiltersQueue) {
+            return;
+        }
+
         const productEvents$ = this.eventBus.ofType(ProductEvent);
         const variantEvents$ = this.eventBus.ofType(ProductVariantEvent);
 
@@ -316,10 +320,14 @@ export class CollectionService implements OnModuleInit {
         });
         await this.assetService.updateEntityAssets(ctx, collection, input);
         await this.customFieldRelationService.updateRelations(ctx, Collection, input, collection);
-        await this.applyFiltersQueue.add({
-            ctx: ctx.serialize(),
-            collectionIds: [collection.id],
-        });
+
+        if (this.configService.catalogOptions.createApplyCollectionFiltersQueue) {
+            await this.applyFiltersQueue.add({
+                ctx: ctx.serialize(),
+                collectionIds: [collection.id],
+            });
+        }
+
         return assertFound(this.findOne(ctx, collection.id));
     }
 
@@ -339,12 +347,14 @@ export class CollectionService implements OnModuleInit {
             },
         });
         await this.customFieldRelationService.updateRelations(ctx, Collection, input, collection);
-        if (input.filters) {
+
+        if (input.filters && this.configService.catalogOptions.createApplyCollectionFiltersQueue) {
             await this.applyFiltersQueue.add({
                 ctx: ctx.serialize(),
                 collectionIds: [collection.id],
             });
         }
+
         return assertFound(this.findOne(ctx, collection.id));
     }
 
@@ -390,10 +400,14 @@ export class CollectionService implements OnModuleInit {
         siblings = moveToIndex(input.index, target, siblings);
 
         await this.connection.getRepository(ctx, Collection).save(siblings);
-        await this.applyFiltersQueue.add({
-            ctx: ctx.serialize(),
-            collectionIds: [target.id],
-        });
+
+        if (this.configService.catalogOptions.createApplyCollectionFiltersQueue) {
+            await this.applyFiltersQueue.add({
+                ctx: ctx.serialize(),
+                collectionIds: [target.id],
+            });
+        }
+
         return assertFound(this.findOne(ctx, input.collectionId));
     }
 

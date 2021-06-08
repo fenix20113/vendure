@@ -86,6 +86,7 @@ export const defaultConfig: RuntimeVendureConfig = {
     },
     catalogOptions: {
         collectionFilters: defaultCollectionFilters,
+        createApplyCollectionFiltersQueue: true,
         productVariantPriceCalculationStrategy: new DefaultProductVariantPriceCalculationStrategy(),
         stockDisplayStrategy: new DefaultStockDisplayStrategy(),
     },
