@@ -175,7 +175,11 @@ export class SimpleGraphQLClient {
         );
     }
 
-    private async makeGraphQlRequest(
+    /**
+     * @description
+     * Performs query or mutation
+     */
+    public async makeGraphQlRequest(
         query: DocumentNode,
         variables?: { [key: string]: any },
         queryParams?: QueryParams,
