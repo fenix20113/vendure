@@ -14,8 +14,8 @@ export class PostgresInitializer implements TestDbInitializer<PostgresConnection
         (connectionOptions as any).database = dbName;
         (connectionOptions as any).synchronize = true;
         this.client = await this.getPostgresConnection(connectionOptions);
-        await this.client.query(`DROP DATABASE IF EXISTS ${dbName}`);
-        await this.client.query(`CREATE DATABASE ${dbName}`);
+        await this.client.query(`DROP DATABASE IF EXISTS "${dbName}"`);
+        await this.client.query(`CREATE DATABASE "${dbName}"`);
         return connectionOptions;
     }
 
