@@ -7,7 +7,6 @@ import { Connection, ConnectionOptions, EntitySubscriberInterface } from 'typeor
 
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
-import { DefaultLogger } from './config/logger/default-logger';
 import { Logger } from './config/logger/vendure-logger';
 import { RuntimeVendureConfig, VendureConfig } from './config/vendure-config';
 import { Administrator } from './entity/administrator/administrator.entity';
@@ -48,12 +47,10 @@ export async function bootstrap(userConfig: Partial<VendureConfig>): Promise<INe
     const appModule = await import('./app.module');
     setProcessContext('server');
     const { hostname, port, cors } = config.apiOptions;
-    DefaultLogger.hideNestBoostrapLogs();
     const app = await NestFactory.create(appModule.AppModule, {
         cors,
-        logger: new Logger(),
+        logger: process.env.VERBOSE_LOGS === '1' ? ['log', 'error', 'warn', 'debug', 'verbose'] : ['error', 'warn'],
     });
-    DefaultLogger.restoreOriginalLogLevel();
     app.useLogger(new Logger());
     if (config.authOptions.tokenMethod === 'cookie') {
         const { cookieOptions } = config.authOptions;
@@ -97,11 +94,9 @@ export async function bootstrapWorker(
 
     const appModule = await import('./app.module');
     setProcessContext('worker');
-    DefaultLogger.hideNestBoostrapLogs();
     const workerApp = await NestFactory.createApplicationContext(appModule.AppModule, {
-        logger: new Logger(),
+        logger: process.env.VERBOSE_LOGS === '1' ? ['log', 'error', 'warn', 'debug', 'verbose'] : ['error', 'warn'],
     });
-    DefaultLogger.restoreOriginalLogLevel();
     workerApp.useLogger(new Logger());
     workerApp.enableShutdownHooks();
     await validateDbTablesForWorker(workerApp);
