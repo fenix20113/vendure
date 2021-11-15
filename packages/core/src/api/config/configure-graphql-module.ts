@@ -1,5 +1,6 @@
-import { DynamicModule } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchema } from '@graphql-tools/load';
+import { DynamicModule, Logger } from '@nestjs/common';
 import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 import { notNullOrUndefined } from '@vendure/common/lib/shared-utils';
 import { buildSchema, extendSchema, GraphQLSchema, printSchema, ValidationContext } from 'graphql';
@@ -11,10 +12,7 @@ import { I18nModule } from '../../i18n/i18n.module';
 import { I18nService } from '../../i18n/i18n.service';
 import { getDynamicGraphQlModulesForPlugins } from '../../plugin/dynamic-plugin-api.module';
 import { getPluginAPIExtensions } from '../../plugin/plugin-metadata';
-import { CustomFieldRelationService } from '../../service/helpers/custom-field-relation/custom-field-relation.service';
 import { ServiceModule } from '../../service/service.module';
-import { ProductVariantService } from '../../service/services/product-variant.service';
-import { TransactionalConnection } from '../../service/transaction/transactional-connection';
 import { ApiSharedModule } from '../api-internal-modules';
 import { CustomFieldRelationResolverService } from '../common/custom-field-relation-resolver.service';
 import { IdCodecService } from '../common/id-codec.service';
@@ -89,7 +87,7 @@ async function createGraphQLOptions(
     customFieldRelationResolverService: CustomFieldRelationResolverService,
     options: GraphQLApiOptions,
 ): Promise<GqlModuleOptions> {
-    const builtSchema = await buildSchemaForApi(options.apiType);
+    const builtSchema = await readSchemaForApi(options.apiType) ?? await buildSchemaForApi(options.apiType);
     const resolvers = generateResolvers(
         configService,
         customFieldRelationResolverService,
@@ -157,5 +155,19 @@ async function createGraphQLOptions(
         }
 
         return schema;
+    }
+
+    /**
+     * Reads the GraphQL schema from the file.
+     */
+    async function readSchemaForApi(apiType: 'shop' | 'admin'): Promise<GraphQLSchema|undefined> {
+        const filePath: undefined|string = process.env[`GRAPHQL_SCHEMA_${apiType.toUpperCase()}`];
+        if (!filePath) {
+            Logger.warn(`Variable GRAPHQL_SCHEMA_${apiType.toUpperCase()} is not provided. Vendure will generate the ${apiType} schema.`);
+            return;
+        }
+        return loadSchema(filePath, {
+            loaders: [new GraphQLFileLoader()]
+        })
     }
 }
