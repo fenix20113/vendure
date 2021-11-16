@@ -1,4 +1,4 @@
-import { DynamicModule, Injectable, Type } from '@nestjs/common';
+import { CacheModuleOptions, DynamicModule, Injectable, Type } from '@nestjs/common';
 import { LanguageCode } from '@vendure/common/lib/generated-types';
 import { ConnectionOptions } from 'typeorm';
 
@@ -104,5 +104,9 @@ export class ConfigService implements VendureConfig {
 
     get jobQueueOptions(): Required<JobQueueOptions> {
         return this.activeConfig.jobQueueOptions;
+    }
+
+    get cacheOptions(): CacheModuleOptions {
+        return this.activeConfig.cacheOptions;
     }
 }
