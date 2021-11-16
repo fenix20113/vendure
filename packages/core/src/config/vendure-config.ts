@@ -1,4 +1,4 @@
-import { DynamicModule, NestMiddleware, Type } from '@nestjs/common';
+import { CacheModuleOptions, DynamicModule, NestMiddleware, Type } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { LanguageCode } from '@vendure/common/lib/generated-types';
 import { PluginDefinition } from 'apollo-server-core';
@@ -767,6 +767,13 @@ export interface VendureConfig {
      * Configuration for Products and Collections.
      */
     catalogOptions?: CatalogOptions;
+    /**
+     * @description
+     * The cache options used by cache-manager.
+     * See [Caching](https://docs.nestjs.com/techniques/caching#caching) for a
+     * full description of all available options.
+     */
+    cacheOptions?: CacheModuleOptions;
     /**
      * @description
      * Defines custom fields which can be used to extend the built-in entities.

@@ -1,9 +1,8 @@
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadSchema } from '@graphql-tools/load';
-import { DynamicModule, Logger } from '@nestjs/common';
+import { CacheModule, CACHE_MANAGER, DynamicModule } from '@nestjs/common';
 import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 import { notNullOrUndefined } from '@vendure/common/lib/shared-utils';
-import { buildSchema, extendSchema, GraphQLSchema, printSchema, ValidationContext } from 'graphql';
+import { Cache } from 'cache-manager';
+import { buildSchema, extendSchema, GraphQLSchema, printSchema, stripIgnoredCharacters, ValidationContext } from 'graphql';
 import path from 'path';
 
 import { ConfigModule } from '../../config/config.module';
@@ -58,6 +57,7 @@ export function configureGraphQLModule(
             idCodecService: IdCodecService,
             typesLoader: GraphQLTypesLoader,
             customFieldRelationResolverService: CustomFieldRelationResolverService,
+            cacheManager: Cache,
         ) => {
             return createGraphQLOptions(
                 i18nService,
@@ -66,6 +66,7 @@ export function configureGraphQLModule(
                 typesLoader,
                 customFieldRelationResolverService,
                 getOptions(configService),
+                cacheManager
             );
         },
         inject: [
@@ -74,8 +75,15 @@ export function configureGraphQLModule(
             IdCodecService,
             GraphQLTypesLoader,
             CustomFieldRelationResolverService,
+            CACHE_MANAGER
         ],
-        imports: [ConfigModule, I18nModule, ApiSharedModule, ServiceModule.forRoot()],
+        imports: [ConfigModule, I18nModule, ApiSharedModule, ServiceModule.forRoot(), CacheModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => {
+                return configService.cacheOptions;
+            },
+            inject: [ConfigService],
+        })],
     });
 }
 
@@ -86,6 +94,7 @@ async function createGraphQLOptions(
     typesLoader: GraphQLTypesLoader,
     customFieldRelationResolverService: CustomFieldRelationResolverService,
     options: GraphQLApiOptions,
+    cacheManager: Cache
 ): Promise<GqlModuleOptions> {
     const builtSchema = await readSchemaForApi(options.apiType) ?? await buildSchemaForApi(options.apiType);
     const resolvers = generateResolvers(
@@ -154,20 +163,35 @@ async function createGraphQLOptions(
             schema = addRegisterCustomerCustomFieldsInput(schema, customFields.Customer || []);
         }
 
+        if (process.env.GRAPHQL_SCHEMA_CACHE) {
+            await cacheManager.set(
+                schemaCacheKey(apiType),
+                stripIgnoredCharacters(printSchema(schema)),
+                process.env.GRAPHQL_SCHEMA_CACHE_TTL
+                    ? { ttl: parseInt(process.env.GRAPHQL_SCHEMA_CACHE_TTL, 10) }
+                    : undefined
+            );
+        }
+
         return schema;
     }
 
     /**
-     * Reads the GraphQL schema from the file.
+     * Reads the GraphQL schema from the cache.
      */
-    async function readSchemaForApi(apiType: 'shop' | 'admin'): Promise<GraphQLSchema|undefined> {
-        const filePath: undefined|string = process.env[`GRAPHQL_SCHEMA_${apiType.toUpperCase()}`];
-        if (!filePath) {
-            Logger.warn(`Variable GRAPHQL_SCHEMA_${apiType.toUpperCase()} is not provided. Vendure will generate the ${apiType} schema.`);
+    async function readSchemaForApi(apiType: 'shop' | 'admin'): Promise<GraphQLSchema | undefined> {
+        if (!process.env.GRAPHQL_SCHEMA_CACHE) {
             return;
         }
-        return loadSchema(filePath, {
-            loaders: [new GraphQLFileLoader()]
-        })
+        const schema: string | undefined = await cacheManager.get(schemaCacheKey(apiType));
+        if (!schema) {
+            return;
+        }
+        return buildSchema(schema);
+    }
+
+    function schemaCacheKey(apiType: 'shop' | 'admin'): string {
+        const prefix = process.env.GRAPHQL_SCHEMA_CACHE_KEY_PREFIX ?? 'graphql_schema_';
+        return `${prefix}${apiType}`;
     }
 }
