@@ -15,7 +15,7 @@ import { PubSubOptions } from './options';
 
 export class PubSubJobQueueStrategy extends InjectableJobQueueStrategy implements JobQueueStrategy {
     private concurrency: number;
-    private queueNamePubSubPair: Map<string, [string, string]>;
+    private queueNamePubSubPair: Map<string, [string, string, number?]>;
     private pubSubClient: PubSub;
     private topics = new Map<string, Topic>();
     private subscriptions = new Map<string, Subscription>();
@@ -136,11 +136,12 @@ export class PubSubJobQueueStrategy extends InjectableJobQueueStrategy implement
             throw new Error(`Subscription name not set for queue: ${queueName}`);
         }
 
-        const [topicName, subscriptionName] = pair;
+        const [topicName, subscriptionName, ackDeadline] = pair;
         subscription = this.topic(queueName).subscription(subscriptionName, {
             flowControl: {
                 maxMessages: this.concurrency,
             },
+            ackDeadline,
         });
         this.subscriptions.set(queueName, subscription);
 
