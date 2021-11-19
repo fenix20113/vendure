@@ -163,7 +163,7 @@ async function createGraphQLOptions(
             schema = addRegisterCustomerCustomFieldsInput(schema, customFields.Customer || []);
         }
 
-        if (process.env.GRAPHQL_SCHEMA_CACHE) {
+        if (Number(process.env.GRAPHQL_SCHEMA_CACHE)) {
             await cacheManager.set(
                 schemaCacheKey(apiType),
                 stripIgnoredCharacters(printSchema(schema)),
@@ -180,7 +180,7 @@ async function createGraphQLOptions(
      * Reads the GraphQL schema from the cache.
      */
     async function readSchemaForApi(apiType: 'shop' | 'admin'): Promise<GraphQLSchema | undefined> {
-        if (!process.env.GRAPHQL_SCHEMA_CACHE) {
+        if (!Number(process.env.GRAPHQL_SCHEMA_CACHE)) {
             return;
         }
         const schema: string | undefined = await cacheManager.get(schemaCacheKey(apiType));
