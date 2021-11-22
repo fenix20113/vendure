@@ -1,10 +1,11 @@
-import { CacheModule, CACHE_MANAGER, DynamicModule } from '@nestjs/common';
+import { CACHE_MANAGER, DynamicModule } from '@nestjs/common';
 import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 import { notNullOrUndefined } from '@vendure/common/lib/shared-utils';
 import { Cache } from 'cache-manager';
 import { buildSchema, extendSchema, GraphQLSchema, printSchema, stripIgnoredCharacters, ValidationContext } from 'graphql';
 import path from 'path';
 
+import { CacheManagerModule } from '../../config/cache-manager.module';
 import { ConfigModule } from '../../config/config.module';
 import { ConfigService } from '../../config/config.service';
 import { I18nModule } from '../../i18n/i18n.module';
@@ -77,13 +78,7 @@ export function configureGraphQLModule(
             CustomFieldRelationResolverService,
             CACHE_MANAGER
         ],
-        imports: [ConfigModule, I18nModule, ApiSharedModule, ServiceModule.forRoot(), CacheModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => {
-                return configService.cacheOptions;
-            },
-            inject: [ConfigService],
-        })],
+        imports: [ConfigModule, I18nModule, ApiSharedModule, ServiceModule.forRoot(), CacheManagerModule],
     });
 }
 

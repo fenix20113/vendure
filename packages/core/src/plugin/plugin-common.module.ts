@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CacheModule } from '../cache/cache.module';
+import { CacheManagerModule } from '../config/cache-manager.module';
 import { ConfigModule } from '../config/config.module';
 import { EventBusModule } from '../event-bus/event-bus.module';
 import { HealthCheckModule } from '../health-check/health-check.module';
@@ -31,6 +32,7 @@ import { ServiceModule } from '../service/service.module';
         JobQueueModule,
         HealthCheckModule,
         CacheModule,
+        CacheManagerModule
     ],
     exports: [
         EventBusModule,
@@ -39,6 +41,7 @@ import { ServiceModule } from '../service/service.module';
         JobQueueModule,
         HealthCheckModule,
         CacheModule,
+        CacheManagerModule
     ],
 })
 export class PluginCommonModule {}
