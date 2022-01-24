@@ -90,6 +90,12 @@ export class PubSubJobQueueStrategy extends InjectableJobQueueStrategy implement
                 })
                 .catch(err => {
                     message.nack();
+                    Logger.error(
+                        `Error: ${err.message}: ${queueName}: ${
+                            message.id
+                        }: data: ${message.data.toString()}`,
+                        loggerCtx,
+                    );
                 });
         };
         this.listeners.set(queueName, process, listener);
