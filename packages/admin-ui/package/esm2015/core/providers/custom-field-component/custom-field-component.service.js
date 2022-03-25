@@ -1,0 +1,47 @@
+import { ComponentFactoryResolver, Injectable } from '@angular/core';
+import { ComponentRegistryService } from '../component-registry/component-registry.service';
+import * as i0 from "@angular/core";
+import * as i1 from "../component-registry/component-registry.service";
+/**
+ * This service allows the registration of custom controls for customFields.
+ */
+export class CustomFieldComponentService {
+    constructor(componentFactoryResolver, componentRegistryService) {
+        this.componentFactoryResolver = componentFactoryResolver;
+        this.componentRegistryService = componentRegistryService;
+    }
+    /**
+     * Register a CustomFieldControl component to be used with the specified customField and entity.
+     */
+    registerCustomFieldComponent(entity, fieldName, component) {
+        const id = this.generateId(entity, fieldName, true);
+        this.componentRegistryService.registerInputComponent(id, component);
+    }
+    /**
+     * Checks whether a custom component is registered for the given entity custom field,
+     * and if so returns the ID of that component.
+     */
+    customFieldComponentExists(entity, fieldName) {
+        const id = this.generateId(entity, fieldName, true);
+        return this.componentRegistryService.getInputComponent(id) ? id : undefined;
+    }
+    generateId(entity, fieldName, isCustomField) {
+        let id = entity;
+        if (isCustomField) {
+            id += '-customFields';
+        }
+        id += '-' + fieldName;
+        return id;
+    }
+}
+CustomFieldComponentService.ɵprov = i0.ɵɵdefineInjectable({ factory: function CustomFieldComponentService_Factory() { return new CustomFieldComponentService(i0.ɵɵinject(i0.ComponentFactoryResolver), i0.ɵɵinject(i1.ComponentRegistryService)); }, token: CustomFieldComponentService, providedIn: "root" });
+CustomFieldComponentService.decorators = [
+    { type: Injectable, args: [{
+                providedIn: 'root',
+            },] }
+];
+CustomFieldComponentService.ctorParameters = () => [
+    { type: ComponentFactoryResolver },
+    { type: ComponentRegistryService }
+];
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tLWZpZWxkLWNvbXBvbmVudC5zZXJ2aWNlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vc3JjL2xpYi9jb3JlL3NyYy9wcm92aWRlcnMvY3VzdG9tLWZpZWxkLWNvbXBvbmVudC9jdXN0b20tZmllbGQtY29tcG9uZW50LnNlcnZpY2UudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxFQUFFLHdCQUF3QixFQUFFLFVBQVUsRUFBRSxNQUFNLGVBQWUsQ0FBQztBQUtyRSxPQUFPLEVBQUUsd0JBQXdCLEVBQUUsTUFBTSxrREFBa0QsQ0FBQzs7O0FBUTVGOztHQUVHO0FBSUgsTUFBTSxPQUFPLDJCQUEyQjtJQUNwQyxZQUNZLHdCQUFrRCxFQUNsRCx3QkFBa0Q7UUFEbEQsNkJBQXdCLEdBQXhCLHdCQUF3QixDQUEwQjtRQUNsRCw2QkFBd0IsR0FBeEIsd0JBQXdCLENBQTBCO0lBQzNELENBQUM7SUFFSjs7T0FFRztJQUNILDRCQUE0QixDQUN4QixNQUE2QixFQUM3QixTQUFpQixFQUNqQixTQUFtQztRQUVuQyxNQUFNLEVBQUUsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLE1BQU0sRUFBRSxTQUFTLEVBQUUsSUFBSSxDQUFDLENBQUM7UUFDcEQsSUFBSSxDQUFDLHdCQUF3QixDQUFDLHNCQUFzQixDQUFDLEVBQUUsRUFBRSxTQUFTLENBQUMsQ0FBQztJQUN4RSxDQUFDO0lBRUQ7OztPQUdHO0lBQ0gsMEJBQTBCLENBQUMsTUFBNkIsRUFBRSxTQUFpQjtRQUN2RSxNQUFNLEVBQUUsR0FBRyxJQUFJLENBQUMsVUFBVSxDQUFDLE1BQU0sRUFBRSxTQUFTLEVBQUUsSUFBSSxDQUFDLENBQUM7UUFDcEQsT0FBTyxJQUFJLENBQUMsd0JBQXdCLENBQUMsaUJBQWlCLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUMsU0FBUyxDQUFDO0lBQ2hGLENBQUM7SUFFTyxVQUFVLENBQUMsTUFBNkIsRUFBRSxTQUFpQixFQUFFLGFBQXNCO1FBQ3ZGLElBQUksRUFBRSxHQUFHLE1BQU0sQ0FBQztRQUNoQixJQUFJLGFBQWEsRUFBRTtZQUNmLEVBQUUsSUFBSSxlQUFlLENBQUM7U0FDekI7UUFDRCxFQUFFLElBQUksR0FBRyxHQUFHLFNBQVMsQ0FBQztRQUN0QixPQUFPLEVBQUUsQ0FBQztJQUNkLENBQUM7Ozs7WUFyQ0osVUFBVSxTQUFDO2dCQUNSLFVBQVUsRUFBRSxNQUFNO2FBQ3JCOzs7WUFsQlEsd0JBQXdCO1lBS3hCLHdCQUF3QiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IENvbXBvbmVudEZhY3RvcnlSZXNvbHZlciwgSW5qZWN0YWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnO1xuaW1wb3J0IHsgVHlwZSB9IGZyb20gJ0B2ZW5kdXJlL2NvbW1vbi9saWIvc2hhcmVkLXR5cGVzJztcblxuaW1wb3J0IHsgRm9ybUlucHV0Q29tcG9uZW50IH0gZnJvbSAnLi4vLi4vY29tbW9uL2NvbXBvbmVudC1yZWdpc3RyeS10eXBlcyc7XG5pbXBvcnQgeyBDdXN0b21GaWVsZHMsIEN1c3RvbUZpZWxkc0ZyYWdtZW50IH0gZnJvbSAnLi4vLi4vY29tbW9uL2dlbmVyYXRlZC10eXBlcyc7XG5pbXBvcnQgeyBDb21wb25lbnRSZWdpc3RyeVNlcnZpY2UgfSBmcm9tICcuLi9jb21wb25lbnQtcmVnaXN0cnkvY29tcG9uZW50LXJlZ2lzdHJ5LnNlcnZpY2UnO1xuXG5leHBvcnQgdHlwZSBDdXN0b21GaWVsZENvbmZpZ1R5cGUgPSBDdXN0b21GaWVsZHNGcmFnbWVudDtcblxuZXhwb3J0IGludGVyZmFjZSBDdXN0b21GaWVsZENvbnRyb2wgZXh0ZW5kcyBGb3JtSW5wdXRDb21wb25lbnQ8Q3VzdG9tRmllbGRDb25maWdUeXBlPiB7fVxuXG5leHBvcnQgdHlwZSBDdXN0b21GaWVsZEVudGl0eU5hbWUgPSBFeGNsdWRlPGtleW9mIEN1c3RvbUZpZWxkcywgJ19fdHlwZW5hbWUnPjtcblxuLyoqXG4gKiBUaGlzIHNlcnZpY2UgYWxsb3dzIHRoZSByZWdpc3RyYXRpb24gb2YgY3VzdG9tIGNvbnRyb2xzIGZvciBjdXN0b21GaWVsZHMuXG4gKi9cbkBJbmplY3RhYmxlKHtcbiAgICBwcm92aWRlZEluOiAncm9vdCcsXG59KVxuZXhwb3J0IGNsYXNzIEN1c3RvbUZpZWxkQ29tcG9uZW50U2VydmljZSB7XG4gICAgY29uc3RydWN0b3IoXG4gICAgICAgIHByaXZhdGUgY29tcG9uZW50RmFjdG9yeVJlc29sdmVyOiBDb21wb25lbnRGYWN0b3J5UmVzb2x2ZXIsXG4gICAgICAgIHByaXZhdGUgY29tcG9uZW50UmVnaXN0cnlTZXJ2aWNlOiBDb21wb25lbnRSZWdpc3RyeVNlcnZpY2UsXG4gICAgKSB7fVxuXG4gICAgLyoqXG4gICAgICogUmVnaXN0ZXIgYSBDdXN0b21GaWVsZENvbnRyb2wgY29tcG9uZW50IHRvIGJlIHVzZWQgd2l0aCB0aGUgc3BlY2lmaWVkIGN1c3RvbUZpZWxkIGFuZCBlbnRpdHkuXG4gICAgICovXG4gICAgcmVnaXN0ZXJDdXN0b21GaWVsZENvbXBvbmVudChcbiAgICAgICAgZW50aXR5OiBDdXN0b21GaWVsZEVudGl0eU5hbWUsXG4gICAgICAgIGZpZWxkTmFtZTogc3RyaW5nLFxuICAgICAgICBjb21wb25lbnQ6IFR5cGU8Q3VzdG9tRmllbGRDb250cm9sPixcbiAgICApIHtcbiAgICAgICAgY29uc3QgaWQgPSB0aGlzLmdlbmVyYXRlSWQoZW50aXR5LCBmaWVsZE5hbWUsIHRydWUpO1xuICAgICAgICB0aGlzLmNvbXBvbmVudFJlZ2lzdHJ5U2VydmljZS5yZWdpc3RlcklucHV0Q29tcG9uZW50KGlkLCBjb21wb25lbnQpO1xuICAgIH1cblxuICAgIC8qKlxuICAgICAqIENoZWNrcyB3aGV0aGVyIGEgY3VzdG9tIGNvbXBvbmVudCBpcyByZWdpc3RlcmVkIGZvciB0aGUgZ2l2ZW4gZW50aXR5IGN1c3RvbSBmaWVsZCxcbiAgICAgKiBhbmQgaWYgc28gcmV0dXJucyB0aGUgSUQgb2YgdGhhdCBjb21wb25lbnQuXG4gICAgICovXG4gICAgY3VzdG9tRmllbGRDb21wb25lbnRFeGlzdHMoZW50aXR5OiBDdXN0b21GaWVsZEVudGl0eU5hbWUsIGZpZWxkTmFtZTogc3RyaW5nKTogc3RyaW5nIHwgdW5kZWZpbmVkIHtcbiAgICAgICAgY29uc3QgaWQgPSB0aGlzLmdlbmVyYXRlSWQoZW50aXR5LCBmaWVsZE5hbWUsIHRydWUpO1xuICAgICAgICByZXR1cm4gdGhpcy5jb21wb25lbnRSZWdpc3RyeVNlcnZpY2UuZ2V0SW5wdXRDb21wb25lbnQoaWQpID8gaWQgOiB1bmRlZmluZWQ7XG4gICAgfVxuXG4gICAgcHJpdmF0ZSBnZW5lcmF0ZUlkKGVudGl0eTogQ3VzdG9tRmllbGRFbnRpdHlOYW1lLCBmaWVsZE5hbWU6IHN0cmluZywgaXNDdXN0b21GaWVsZDogYm9vbGVhbikge1xuICAgICAgICBsZXQgaWQgPSBlbnRpdHk7XG4gICAgICAgIGlmIChpc0N1c3RvbUZpZWxkKSB7XG4gICAgICAgICAgICBpZCArPSAnLWN1c3RvbUZpZWxkcyc7XG4gICAgICAgIH1cbiAgICAgICAgaWQgKz0gJy0nICsgZmllbGROYW1lO1xuICAgICAgICByZXR1cm4gaWQ7XG4gICAgfVxufVxuIl19

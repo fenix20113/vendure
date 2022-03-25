@@ -1,0 +1,110 @@
+import { gql } from 'apollo-angular';
+export const FACET_VALUE_FRAGMENT = gql `
+    fragment FacetValue on FacetValue {
+        id
+        createdAt
+        updatedAt
+        languageCode
+        code
+        name
+        translations {
+            id
+            languageCode
+            name
+        }
+        facet {
+            id
+            createdAt
+            updatedAt
+            name
+        }
+    }
+`;
+export const FACET_WITH_VALUES_FRAGMENT = gql `
+    fragment FacetWithValues on Facet {
+        id
+        createdAt
+        updatedAt
+        languageCode
+        isPrivate
+        code
+        name
+        translations {
+            id
+            languageCode
+            name
+        }
+        values {
+            ...FacetValue
+        }
+    }
+    ${FACET_VALUE_FRAGMENT}
+`;
+export const CREATE_FACET = gql `
+    mutation CreateFacet($input: CreateFacetInput!) {
+        createFacet(input: $input) {
+            ...FacetWithValues
+        }
+    }
+    ${FACET_WITH_VALUES_FRAGMENT}
+`;
+export const UPDATE_FACET = gql `
+    mutation UpdateFacet($input: UpdateFacetInput!) {
+        updateFacet(input: $input) {
+            ...FacetWithValues
+        }
+    }
+    ${FACET_WITH_VALUES_FRAGMENT}
+`;
+export const DELETE_FACET = gql `
+    mutation DeleteFacet($id: ID!, $force: Boolean) {
+        deleteFacet(id: $id, force: $force) {
+            result
+            message
+        }
+    }
+`;
+export const CREATE_FACET_VALUES = gql `
+    mutation CreateFacetValues($input: [CreateFacetValueInput!]!) {
+        createFacetValues(input: $input) {
+            ...FacetValue
+        }
+    }
+    ${FACET_VALUE_FRAGMENT}
+`;
+export const UPDATE_FACET_VALUES = gql `
+    mutation UpdateFacetValues($input: [UpdateFacetValueInput!]!) {
+        updateFacetValues(input: $input) {
+            ...FacetValue
+        }
+    }
+    ${FACET_VALUE_FRAGMENT}
+`;
+export const DELETE_FACET_VALUES = gql `
+    mutation DeleteFacetValues($ids: [ID!]!, $force: Boolean) {
+        deleteFacetValues(ids: $ids, force: $force) {
+            result
+            message
+        }
+    }
+`;
+export const GET_FACET_LIST = gql `
+    query GetFacetList($options: FacetListOptions) {
+        facets(options: $options) {
+            items {
+                ...FacetWithValues
+            }
+            totalItems
+        }
+    }
+    ${FACET_WITH_VALUES_FRAGMENT}
+`;
+export const GET_FACET_WITH_VALUES = gql `
+    query GetFacetWithValues($id: ID!) {
+        facet(id: $id) {
+            ...FacetWithValues
+        }
+    }
+    ${FACET_WITH_VALUES_FRAGMENT}
+`;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZmFjZXQtZGVmaW5pdGlvbnMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9zcmMvbGliL2NvcmUvc3JjL2RhdGEvZGVmaW5pdGlvbnMvZmFjZXQtZGVmaW5pdGlvbnMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxFQUFFLEdBQUcsRUFBRSxNQUFNLGdCQUFnQixDQUFDO0FBRXJDLE1BQU0sQ0FBQyxNQUFNLG9CQUFvQixHQUFHLEdBQUcsQ0FBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Q0FvQnRDLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSwwQkFBMEIsR0FBRyxHQUFHLENBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7OztNQWtCdkMsb0JBQW9CO0NBQ3pCLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxZQUFZLEdBQUcsR0FBRyxDQUFBOzs7Ozs7TUFNekIsMEJBQTBCO0NBQy9CLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxZQUFZLEdBQUcsR0FBRyxDQUFBOzs7Ozs7TUFNekIsMEJBQTBCO0NBQy9CLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxZQUFZLEdBQUcsR0FBRyxDQUFBOzs7Ozs7O0NBTzlCLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxtQkFBbUIsR0FBRyxHQUFHLENBQUE7Ozs7OztNQU1oQyxvQkFBb0I7Q0FDekIsQ0FBQztBQUVGLE1BQU0sQ0FBQyxNQUFNLG1CQUFtQixHQUFHLEdBQUcsQ0FBQTs7Ozs7O01BTWhDLG9CQUFvQjtDQUN6QixDQUFDO0FBRUYsTUFBTSxDQUFDLE1BQU0sbUJBQW1CLEdBQUcsR0FBRyxDQUFBOzs7Ozs7O0NBT3JDLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxjQUFjLEdBQUcsR0FBRyxDQUFBOzs7Ozs7Ozs7TUFTM0IsMEJBQTBCO0NBQy9CLENBQUM7QUFFRixNQUFNLENBQUMsTUFBTSxxQkFBcUIsR0FBRyxHQUFHLENBQUE7Ozs7OztNQU1sQywwQkFBMEI7Q0FDL0IsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IGdxbCB9IGZyb20gJ2Fwb2xsby1hbmd1bGFyJztcblxuZXhwb3J0IGNvbnN0IEZBQ0VUX1ZBTFVFX0ZSQUdNRU5UID0gZ3FsYFxuICAgIGZyYWdtZW50IEZhY2V0VmFsdWUgb24gRmFjZXRWYWx1ZSB7XG4gICAgICAgIGlkXG4gICAgICAgIGNyZWF0ZWRBdFxuICAgICAgICB1cGRhdGVkQXRcbiAgICAgICAgbGFuZ3VhZ2VDb2RlXG4gICAgICAgIGNvZGVcbiAgICAgICAgbmFtZVxuICAgICAgICB0cmFuc2xhdGlvbnMge1xuICAgICAgICAgICAgaWRcbiAgICAgICAgICAgIGxhbmd1YWdlQ29kZVxuICAgICAgICAgICAgbmFtZVxuICAgICAgICB9XG4gICAgICAgIGZhY2V0IHtcbiAgICAgICAgICAgIGlkXG4gICAgICAgICAgICBjcmVhdGVkQXRcbiAgICAgICAgICAgIHVwZGF0ZWRBdFxuICAgICAgICAgICAgbmFtZVxuICAgICAgICB9XG4gICAgfVxuYDtcblxuZXhwb3J0IGNvbnN0IEZBQ0VUX1dJVEhfVkFMVUVTX0ZSQUdNRU5UID0gZ3FsYFxuICAgIGZyYWdtZW50IEZhY2V0V2l0aFZhbHVlcyBvbiBGYWNldCB7XG4gICAgICAgIGlkXG4gICAgICAgIGNyZWF0ZWRBdFxuICAgICAgICB1cGRhdGVkQXRcbiAgICAgICAgbGFuZ3VhZ2VDb2RlXG4gICAgICAgIGlzUHJpdmF0ZVxuICAgICAgICBjb2RlXG4gICAgICAgIG5hbWVcbiAgICAgICAgdHJhbnNsYXRpb25zIHtcbiAgICAgICAgICAgIGlkXG4gICAgICAgICAgICBsYW5ndWFnZUNvZGVcbiAgICAgICAgICAgIG5hbWVcbiAgICAgICAgfVxuICAgICAgICB2YWx1ZXMge1xuICAgICAgICAgICAgLi4uRmFjZXRWYWx1ZVxuICAgICAgICB9XG4gICAgfVxuICAgICR7RkFDRVRfVkFMVUVfRlJBR01FTlR9XG5gO1xuXG5leHBvcnQgY29uc3QgQ1JFQVRFX0ZBQ0VUID0gZ3FsYFxuICAgIG11dGF0aW9uIENyZWF0ZUZhY2V0KCRpbnB1dDogQ3JlYXRlRmFjZXRJbnB1dCEpIHtcbiAgICAgICAgY3JlYXRlRmFjZXQoaW5wdXQ6ICRpbnB1dCkge1xuICAgICAgICAgICAgLi4uRmFjZXRXaXRoVmFsdWVzXG4gICAgICAgIH1cbiAgICB9XG4gICAgJHtGQUNFVF9XSVRIX1ZBTFVFU19GUkFHTUVOVH1cbmA7XG5cbmV4cG9ydCBjb25zdCBVUERBVEVfRkFDRVQgPSBncWxgXG4gICAgbXV0YXRpb24gVXBkYXRlRmFjZXQoJGlucHV0OiBVcGRhdGVGYWNldElucHV0ISkge1xuICAgICAgICB1cGRhdGVGYWNldChpbnB1dDogJGlucHV0KSB7XG4gICAgICAgICAgICAuLi5GYWNldFdpdGhWYWx1ZXNcbiAgICAgICAgfVxuICAgIH1cbiAgICAke0ZBQ0VUX1dJVEhfVkFMVUVTX0ZSQUdNRU5UfVxuYDtcblxuZXhwb3J0IGNvbnN0IERFTEVURV9GQUNFVCA9IGdxbGBcbiAgICBtdXRhdGlvbiBEZWxldGVGYWNldCgkaWQ6IElEISwgJGZvcmNlOiBCb29sZWFuKSB7XG4gICAgICAgIGRlbGV0ZUZhY2V0KGlkOiAkaWQsIGZvcmNlOiAkZm9yY2UpIHtcbiAgICAgICAgICAgIHJlc3VsdFxuICAgICAgICAgICAgbWVzc2FnZVxuICAgICAgICB9XG4gICAgfVxuYDtcblxuZXhwb3J0IGNvbnN0IENSRUFURV9GQUNFVF9WQUxVRVMgPSBncWxgXG4gICAgbXV0YXRpb24gQ3JlYXRlRmFjZXRWYWx1ZXMoJGlucHV0OiBbQ3JlYXRlRmFjZXRWYWx1ZUlucHV0IV0hKSB7XG4gICAgICAgIGNyZWF0ZUZhY2V0VmFsdWVzKGlucHV0OiAkaW5wdXQpIHtcbiAgICAgICAgICAgIC4uLkZhY2V0VmFsdWVcbiAgICAgICAgfVxuICAgIH1cbiAgICAke0ZBQ0VUX1ZBTFVFX0ZSQUdNRU5UfVxuYDtcblxuZXhwb3J0IGNvbnN0IFVQREFURV9GQUNFVF9WQUxVRVMgPSBncWxgXG4gICAgbXV0YXRpb24gVXBkYXRlRmFjZXRWYWx1ZXMoJGlucHV0OiBbVXBkYXRlRmFjZXRWYWx1ZUlucHV0IV0hKSB7XG4gICAgICAgIHVwZGF0ZUZhY2V0VmFsdWVzKGlucHV0OiAkaW5wdXQpIHtcbiAgICAgICAgICAgIC4uLkZhY2V0VmFsdWVcbiAgICAgICAgfVxuICAgIH1cbiAgICAke0ZBQ0VUX1ZBTFVFX0ZSQUdNRU5UfVxuYDtcblxuZXhwb3J0IGNvbnN0IERFTEVURV9GQUNFVF9WQUxVRVMgPSBncWxgXG4gICAgbXV0YXRpb24gRGVsZXRlRmFjZXRWYWx1ZXMoJGlkczogW0lEIV0hLCAkZm9yY2U6IEJvb2xlYW4pIHtcbiAgICAgICAgZGVsZXRlRmFjZXRWYWx1ZXMoaWRzOiAkaWRzLCBmb3JjZTogJGZvcmNlKSB7XG4gICAgICAgICAgICByZXN1bHRcbiAgICAgICAgICAgIG1lc3NhZ2VcbiAgICAgICAgfVxuICAgIH1cbmA7XG5cbmV4cG9ydCBjb25zdCBHRVRfRkFDRVRfTElTVCA9IGdxbGBcbiAgICBxdWVyeSBHZXRGYWNldExpc3QoJG9wdGlvbnM6IEZhY2V0TGlzdE9wdGlvbnMpIHtcbiAgICAgICAgZmFjZXRzKG9wdGlvbnM6ICRvcHRpb25zKSB7XG4gICAgICAgICAgICBpdGVtcyB7XG4gICAgICAgICAgICAgICAgLi4uRmFjZXRXaXRoVmFsdWVzXG4gICAgICAgICAgICB9XG4gICAgICAgICAgICB0b3RhbEl0ZW1zXG4gICAgICAgIH1cbiAgICB9XG4gICAgJHtGQUNFVF9XSVRIX1ZBTFVFU19GUkFHTUVOVH1cbmA7XG5cbmV4cG9ydCBjb25zdCBHRVRfRkFDRVRfV0lUSF9WQUxVRVMgPSBncWxgXG4gICAgcXVlcnkgR2V0RmFjZXRXaXRoVmFsdWVzKCRpZDogSUQhKSB7XG4gICAgICAgIGZhY2V0KGlkOiAkaWQpIHtcbiAgICAgICAgICAgIC4uLkZhY2V0V2l0aFZhbHVlc1xuICAgICAgICB9XG4gICAgfVxuICAgICR7RkFDRVRfV0lUSF9WQUxVRVNfRlJBR01FTlR9XG5gO1xuIl19

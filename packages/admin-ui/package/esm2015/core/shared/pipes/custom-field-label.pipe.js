@@ -1,0 +1,46 @@
+import { Pipe } from '@angular/core';
+import { DataService } from '../../data/providers/data.service';
+/**
+ * Displays a localized label for a CustomField or StringFieldOption, falling back to the
+ * name/value if none are defined.
+ */
+export class CustomFieldLabelPipe {
+    constructor(dataService) {
+        this.dataService = dataService;
+        this.subscription = dataService.client.uiState().stream$.subscribe(val => {
+            this.uiLanguageCode = val.uiState.language;
+        });
+    }
+    transform(value) {
+        if (!value) {
+            return value;
+        }
+        const { label } = value;
+        const name = this.isCustomFieldConfig(value) ? value.name : value.value;
+        if (label) {
+            const match = label.find(l => l.languageCode === this.uiLanguageCode);
+            return match ? match.value : label[0].value;
+        }
+        else {
+            return name;
+        }
+    }
+    ngOnDestroy() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
+    }
+    isCustomFieldConfig(input) {
+        return input.hasOwnProperty('name');
+    }
+}
+CustomFieldLabelPipe.decorators = [
+    { type: Pipe, args: [{
+                name: 'customFieldLabel',
+                pure: false,
+            },] }
+];
+CustomFieldLabelPipe.ctorParameters = () => [
+    { type: DataService }
+];
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tLWZpZWxkLWxhYmVsLnBpcGUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9zcmMvbGliL2NvcmUvc3JjL3NoYXJlZC9waXBlcy9jdXN0b20tZmllbGQtbGFiZWwucGlwZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQWEsSUFBSSxFQUFpQixNQUFNLGVBQWUsQ0FBQztBQUkvRCxPQUFPLEVBQUUsV0FBVyxFQUFFLE1BQU0sbUNBQW1DLENBQUM7QUFFaEU7OztHQUdHO0FBS0gsTUFBTSxPQUFPLG9CQUFvQjtJQUk3QixZQUFvQixXQUF3QjtRQUF4QixnQkFBVyxHQUFYLFdBQVcsQ0FBYTtRQUN4QyxJQUFJLENBQUMsWUFBWSxHQUFHLFdBQVcsQ0FBQyxNQUFNLENBQUMsT0FBTyxFQUFFLENBQUMsT0FBTyxDQUFDLFNBQVMsQ0FBQyxHQUFHLENBQUMsRUFBRTtZQUNyRSxJQUFJLENBQUMsY0FBYyxHQUFHLEdBQUcsQ0FBQyxPQUFPLENBQUMsUUFBUSxDQUFDO1FBQy9DLENBQUMsQ0FBQyxDQUFDO0lBQ1AsQ0FBQztJQUVELFNBQVMsQ0FBQyxLQUE0QztRQUNsRCxJQUFJLENBQUMsS0FBSyxFQUFFO1lBQ1IsT0FBTyxLQUFLLENBQUM7U0FDaEI7UUFDRCxNQUFNLEVBQUUsS0FBSyxFQUFFLEdBQUcsS0FBSyxDQUFDO1FBQ3hCLE1BQU0sSUFBSSxHQUFHLElBQUksQ0FBQyxtQkFBbUIsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLEtBQUssQ0FBQztRQUN4RSxJQUFJLEtBQUssRUFBRTtZQUNQLE1BQU0sS0FBSyxHQUFHLEtBQUssQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUMsWUFBWSxLQUFLLElBQUksQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUN0RSxPQUFPLEtBQUssQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQztTQUMvQzthQUFNO1lBQ0gsT0FBTyxJQUFJLENBQUM7U0FDZjtJQUNMLENBQUM7SUFFRCxXQUFXO1FBQ1AsSUFBSSxJQUFJLENBQUMsWUFBWSxFQUFFO1lBQ25CLElBQUksQ0FBQyxZQUFZLENBQUMsV0FBVyxFQUFFLENBQUM7U0FDbkM7SUFDTCxDQUFDO0lBRU8sbUJBQW1CLENBQUMsS0FBVTtRQUNsQyxPQUFPLEtBQUssQ0FBQyxjQUFjLENBQUMsTUFBTSxDQUFDLENBQUM7SUFDeEMsQ0FBQzs7O1lBcENKLElBQUksU0FBQztnQkFDRixJQUFJLEVBQUUsa0JBQWtCO2dCQUN4QixJQUFJLEVBQUUsS0FBSzthQUNkOzs7WUFUUSxXQUFXIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgT25EZXN0cm95LCBQaXBlLCBQaXBlVHJhbnNmb3JtIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7XG5pbXBvcnQgeyBTdWJzY3JpcHRpb24gfSBmcm9tICdyeGpzJztcblxuaW1wb3J0IHsgQ3VzdG9tRmllbGRDb25maWcsIExhbmd1YWdlQ29kZSwgU3RyaW5nRmllbGRPcHRpb24gfSBmcm9tICcuLi8uLi9jb21tb24vZ2VuZXJhdGVkLXR5cGVzJztcbmltcG9ydCB7IERhdGFTZXJ2aWNlIH0gZnJvbSAnLi4vLi4vZGF0YS9wcm92aWRlcnMvZGF0YS5zZXJ2aWNlJztcblxuLyoqXG4gKiBEaXNwbGF5cyBhIGxvY2FsaXplZCBsYWJlbCBmb3IgYSBDdXN0b21GaWVsZCBvciBTdHJpbmdGaWVsZE9wdGlvbiwgZmFsbGluZyBiYWNrIHRvIHRoZVxuICogbmFtZS92YWx1ZSBpZiBub25lIGFyZSBkZWZpbmVkLlxuICovXG5AUGlwZSh7XG4gICAgbmFtZTogJ2N1c3RvbUZpZWxkTGFiZWwnLFxuICAgIHB1cmU6IGZhbHNlLFxufSlcbmV4cG9ydCBjbGFzcyBDdXN0b21GaWVsZExhYmVsUGlwZSBpbXBsZW1lbnRzIFBpcGVUcmFuc2Zvcm0sIE9uRGVzdHJveSB7XG4gICAgcHJpdmF0ZSByZWFkb25seSBzdWJzY3JpcHRpb246IFN1YnNjcmlwdGlvbjtcbiAgICBwcml2YXRlIHVpTGFuZ3VhZ2VDb2RlOiBMYW5ndWFnZUNvZGU7XG5cbiAgICBjb25zdHJ1Y3Rvcihwcml2YXRlIGRhdGFTZXJ2aWNlOiBEYXRhU2VydmljZSkge1xuICAgICAgICB0aGlzLnN1YnNjcmlwdGlvbiA9IGRhdGFTZXJ2aWNlLmNsaWVudC51aVN0YXRlKCkuc3RyZWFtJC5zdWJzY3JpYmUodmFsID0+IHtcbiAgICAgICAgICAgIHRoaXMudWlMYW5ndWFnZUNvZGUgPSB2YWwudWlTdGF0ZS5sYW5ndWFnZTtcbiAgICAgICAgfSk7XG4gICAgfVxuXG4gICAgdHJhbnNmb3JtKHZhbHVlOiBDdXN0b21GaWVsZENvbmZpZyB8IFN0cmluZ0ZpZWxkT3B0aW9uKTogc3RyaW5nIHtcbiAgICAgICAgaWYgKCF2YWx1ZSkge1xuICAgICAgICAgICAgcmV0dXJuIHZhbHVlO1xuICAgICAgICB9XG4gICAgICAgIGNvbnN0IHsgbGFiZWwgfSA9IHZhbHVlO1xuICAgICAgICBjb25zdCBuYW1lID0gdGhpcy5pc0N1c3RvbUZpZWxkQ29uZmlnKHZhbHVlKSA/IHZhbHVlLm5hbWUgOiB2YWx1ZS52YWx1ZTtcbiAgICAgICAgaWYgKGxhYmVsKSB7XG4gICAgICAgICAgICBjb25zdCBtYXRjaCA9IGxhYmVsLmZpbmQobCA9PiBsLmxhbmd1YWdlQ29kZSA9PT0gdGhpcy51aUxhbmd1YWdlQ29kZSk7XG4gICAgICAgICAgICByZXR1cm4gbWF0Y2ggPyBtYXRjaC52YWx1ZSA6IGxhYmVsWzBdLnZhbHVlO1xuICAgICAgICB9IGVsc2Uge1xuICAgICAgICAgICAgcmV0dXJuIG5hbWU7XG4gICAgICAgIH1cbiAgICB9XG5cbiAgICBuZ09uRGVzdHJveSgpOiB2b2lkIHtcbiAgICAgICAgaWYgKHRoaXMuc3Vic2NyaXB0aW9uKSB7XG4gICAgICAgICAgICB0aGlzLnN1YnNjcmlwdGlvbi51bnN1YnNjcmliZSgpO1xuICAgICAgICB9XG4gICAgfVxuXG4gICAgcHJpdmF0ZSBpc0N1c3RvbUZpZWxkQ29uZmlnKGlucHV0OiBhbnkpOiBpbnB1dCBpcyBDdXN0b21GaWVsZENvbmZpZyB7XG4gICAgICAgIHJldHVybiBpbnB1dC5oYXNPd25Qcm9wZXJ0eSgnbmFtZScpO1xuICAgIH1cbn1cbiJdfQ==
